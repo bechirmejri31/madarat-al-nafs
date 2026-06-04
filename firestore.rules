@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    match /researches/{researchId} {
+      allow get: if isValidId(researchId);
+      allow list: if false; // No need to list root docs
+      
+      match /comments/{commentId} {
+        allow read: if isValidId(researchId);
+        allow create: if isValidId(researchId) && 
+                      request.resource.data.keys().hasAll(['authorName', 'content', 'createdAt']) &&
+                      request.resource.data.authorName is string &&
+                      request.resource.data.authorName.size() <= 100 &&
+                      request.resource.data.content is string &&
+                      request.resource.data.content.size() <= 1000 &&
+                      request.resource.data.createdAt == request.time;
+      }
+
+      match /likes/{userId} {
+        allow read: if isValidId(researchId);
+        allow create: if isValidId(researchId) && 
+                         isSignedIn() && 
+                         request.auth.uid == userId &&
+                         request.resource.data.keys().hasAll(['userId', 'createdAt']) &&
+                         request.resource.data.userId == request.auth.uid &&
+                         request.resource.data.createdAt == request.time;
+        allow delete: if isValidId(researchId) && 
+                         isSignedIn() && 
+                         request.auth.uid == userId;
+      }
+    }
+
+    match /activity/{activityId} {
+      allow read: if true;
+      allow create: if isSignedIn() && 
+                    request.resource.data.keys().hasAll(['type', 'authorName', 'researchId', 'createdAt']) &&
+                    request.resource.data.createdAt == request.time;
+    }
+
+    match /suggestions/{suggestionId} {
+      allow create: if request.resource.data.keys().hasAll(['content', 'createdAt']) &&
+                    request.resource.data.content is string &&
+                    request.resource.data.content.size() <= 2000 &&
+                    request.resource.data.createdAt == request.time;
+      allow read: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+      allow write: if request.resource.data.keys().hasAll(['lastSeen']) &&
+                   request.resource.data.lastSeen == request.time;
+    }
+
+    match /ratings/{ratingId} {
+      allow create: if request.resource.data.keys().hasAll(['score', 'createdAt']) &&
+                    request.resource.data.score is number &&
+                    request.resource.data.score >= 1 &&
+                    request.resource.data.score <= 5 &&
+                    request.resource.data.createdAt == request.time;
+      allow read: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+    }
+
+    match /videos/{videoId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+    }
+
+    match /settings/{configId} {
+      allow read: if isValidId(configId);
+      allow write: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+    }
+
+    match /tv_sessions/{sessionId} {
+      allow read, write: if true;
+    }
+
+    match /consultations/{consultationId} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'consultationType', 'details', 'submittedAt']) &&
+                    request.resource.data.name is string &&
+                    request.resource.data.name.size() <= 100 &&
+                    request.resource.data.email is string &&
+                    request.resource.data.email.size() <= 150 &&
+                    request.resource.data.consultationType is string &&
+                    request.resource.data.consultationType.size() <= 150 &&
+                    request.resource.data.details is string &&
+                    request.resource.data.details.size() <= 15000 &&
+                    request.resource.data.submittedAt == request.time;
+      allow read, write: if request.auth != null && request.auth.token.email == 'bechirmejri556@gmail.com';
+    }
+  }
+}

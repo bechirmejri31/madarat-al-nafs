@@ -1,0 +1,6 @@
+{
+  "name": "مدارات النفس: أعماق السلوك",
+  "description": "منصة بحثية سلوكية ذكية لاستكشاف أغوار النفس البشرية وفهم تعقيدات السلوك الإنساني، إشراف وإدارة: بشير الماجري.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

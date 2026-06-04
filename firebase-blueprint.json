@@ -1,0 +1,169 @@
+{
+  "entities": {
+    "ResearchInteraction": {
+      "title": "Research Interaction State",
+      "description": "Aggregated stats for a research paper.",
+      "type": "object",
+      "properties": {
+        "likesCount": { "type": "number" },
+        "commentsCount": { "type": "number" }
+      }
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A user comment on a research paper.",
+      "type": "object",
+      "properties": {
+        "authorName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" }
+      },
+      "required": ["authorName", "content", "createdAt"]
+    },
+    "Like": {
+      "title": "Like",
+      "description": "A user like record.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "createdAt"]
+    },
+    "Suggestion": {
+      "title": "Suggestion",
+      "description": "Feedback or suggestion from a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "createdAt"]
+    },
+    "VisitorSession": {
+      "title": "Visitor Session",
+      "description": "Records a visitor session.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "ip": { "type": "string" },
+        "userAgent": { "type": "string" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "path": { "type": "string" }
+      },
+      "required": ["lastSeen"]
+    },
+    "Rating": {
+      "title": "Rating",
+      "description": "User rating for the platform.",
+      "type": "object",
+      "properties": {
+        "score": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["score", "createdAt"]
+    },
+    "Video": {
+      "title": "Educational Video",
+      "description": "A psychological guidance video.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "object" },
+        "description": { "type": "object" },
+        "url": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "category": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "url", "createdAt"]
+    },
+    "Consultation": {
+      "title": "Consultation",
+      "description": "User behavioral & psychological consultation request.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "consultationType": { "type": "string" },
+        "details": { "type": "string" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "lang": { "type": "string" },
+        "platform": { "type": "string" }
+      },
+      "required": ["name", "email", "consultationType", "details", "submittedAt"]
+    },
+    "TvSession": {
+      "title": "Smart TV Session Link",
+      "description": "Sync real-time platform commands to/from smart TVs.",
+      "type": "object",
+      "properties": {
+        "pinCode": { "type": "string" },
+        "activeTab": { "type": "string" },
+        "activeQuoteAr": { "type": "string" },
+        "activeQuoteEn": { "type": "string" },
+        "tvBreathScale": { "type": "number" },
+        "isTvAmbientActive": { "type": "boolean" },
+        "tvEyeX": { "type": "number" },
+        "audioFrequency": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["pinCode", "activeTab"]
+    },
+    "PlatformConfig": {
+      "title": "Platform Media Configuration",
+      "description": "Dynamic platform assets and configurations.",
+      "type": "object",
+      "properties": {
+        "bechirAvatar": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/settings/{configId}": {
+      "schema": "PlatformConfig",
+      "description": "Dynamic system-wide values and media overrides."
+    },
+    "/tv_sessions/{sessionId}": {
+      "schema": "TvSession",
+      "description": "Real-time state records matching TV with companion remote devices."
+    },
+    "/consultations/{consultationId}": {
+      "schema": "Consultation",
+      "description": "Private behavioral & psychological consultation submissions."
+    },
+    "/researches/{researchId}": {
+      "schema": "ResearchInteraction",
+      "description": "Root document for research interaction data."
+    },
+    "/researches/{researchId}/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "User comments for specific research."
+    },
+    "/researches/{researchId}/likes/{userId}": {
+      "schema": "Like",
+      "description": "User likes for specific research."
+    },
+    "/suggestions/{suggestionId}": {
+      "schema": "Suggestion",
+      "description": "User suggestions for platform development."
+    },
+    "/sessions/{sessionId}": {
+      "schema": "VisitorSession",
+      "description": "Real-time or historical visitor session records."
+    },
+    "/ratings/{ratingId}": {
+      "schema": "Rating",
+      "description": "User ratings for the platform."
+    },
+    "/videos/{videoId}": {
+      "schema": "Video",
+      "description": "Psychological guidance and educational videos."
+    }
+  }
+}
